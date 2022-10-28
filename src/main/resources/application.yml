@@ -1,0 +1,18 @@
+aws:
+  access-key:
+  secret-key:
+  dynamodb:
+
+cloud:
+  aws:
+    stack:
+      auto: false
+    region:
+      static: us-east-1
+
+spring:
+  data:
+    dynamodb:
+      entity2ddl:
+        auto: validate
+
