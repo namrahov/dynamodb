@@ -1,6 +1,7 @@
 package com.dynamodb.controller;
 
 
+import com.dynamodb.model.Employee;
 import com.dynamodb.model.Movie;
 import com.dynamodb.service.MovieService;
 import org.springframework.web.bind.annotation.*;
@@ -30,5 +31,15 @@ public class MovieController {
     @DeleteMapping
     public void deleteAllMovies() {
         movieService.deleteAllMovies();
+    }
+
+    @PostMapping("/employee")
+    public Employee saveEmployee(@RequestBody Employee employee) {
+        return movieService.saveEmployee(employee);
+    }
+
+    @GetMapping("/employee")
+    public List<Employee> AllEmployees() {
+        return movieService.getAllEmployees();
     }
 }

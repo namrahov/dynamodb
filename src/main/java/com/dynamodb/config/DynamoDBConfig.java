@@ -28,7 +28,7 @@ public class DynamoDBConfig {
 
         AmazonDynamoDB amazonDynamoDB = AmazonDynamoDBClientBuilder
                 .standard()
-                .withRegion(Regions.US_EAST_1)
+                .withRegion(Regions.EU_NORTH_1)
                 .withCredentials(new AWSStaticCredentialsProvider(awsCredentials))
                 .build();
 

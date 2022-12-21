@@ -8,7 +8,7 @@ cloud:
     stack:
       auto: false
     region:
-      static: us-east-1
+      static: eu-north-1
 
 spring:
   data:
