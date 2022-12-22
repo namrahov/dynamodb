@@ -149,4 +149,24 @@ public class Movie {
     public void setImdbRating(String imdbRating) {
         this.imdbRating = imdbRating;
     }
+
+    @Override
+    public String toString() {
+        return "Movie{" +
+                "filmId='" + filmId + '\'' +
+                ", title='" + title + '\'' +
+                ", releaseYear='" + releaseYear + '\'' +
+                ", rated='" + rated + '\'' +
+                ", released='" + released + '\'' +
+                ", runtime='" + runtime + '\'' +
+                ", genres=" + genres +
+                ", actors=" + actors +
+                ", director='" + director + '\'' +
+                ", pilot='" + pilot + '\'' +
+                ", language='" + language + '\'' +
+                ", country='" + country + '\'' +
+                ", awards='" + awards + '\'' +
+                ", imdbRating='" + imdbRating + '\'' +
+                '}';
+    }
 }

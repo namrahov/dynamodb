@@ -1,6 +1,7 @@
 package com.dynamodb.controller;
 
 
+import com.dynamodb.model.Application;
 import com.dynamodb.model.Employee;
 import com.dynamodb.model.Movie;
 import com.dynamodb.service.MovieService;
@@ -41,5 +42,15 @@ public class MovieController {
     @GetMapping("/employee")
     public List<Employee> AllEmployees() {
         return movieService.getAllEmployees();
+    }
+
+    @PostMapping("/application")
+    public Application saveEmployee(@RequestBody Application application) {
+        return movieService.saveApplication(application);
+    }
+
+    @GetMapping("/{balance}")
+    public List<Employee> findByBalance(@PathVariable String balance) {
+        return movieService.findByBalance(balance);
     }
 }
