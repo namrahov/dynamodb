@@ -1,6 +1,6 @@
 aws:
-  access-key: AKIAZHPLDPWLB24GTBW2
-  secret-key: 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
+  access-key:
+  secret-key:
   dynamodb:
 
 cloud:
