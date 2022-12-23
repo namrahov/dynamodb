@@ -21,6 +21,8 @@ public class ApplicationMapper {
         entity.setCheckedId(dto.getCheckedId());
         entity.setPerson(dto.getPerson());
         entity.setCustomerType(dto.getCustomerType());
+        entity.setCustomerName(dto.getCustomerName());
+        entity.setFilePath(dto.getFilePath());
         entity.setCourtName(dto.getCourtName());
         entity.setJudgeName(dto.getJudgeName());
         entity.setDecisionNumber(dto.getDecisionNumber());
@@ -44,6 +46,7 @@ public class ApplicationMapper {
             comment.setCommentId(commentId++);
             comment.setCommentator(commentDto.getCommentator());
             comment.setDescription(commentDto.getDescription());
+            comment.setCommentType(commentDto.getCommentType());
 
             commentList.add(comment);
         }

@@ -6,6 +6,7 @@ import com.dynamodb.entity.document.Document;
 import com.dynamodb.model.enums.CustomerType;
 import com.dynamodb.model.enums.Priority;
 import com.dynamodb.model.enums.Status;
+import com.dynamodb.util.LocalDateConverter;
 import com.dynamodb.util.LocalDateTimeConverter;
 import lombok.Getter;
 import lombok.Setter;
@@ -77,7 +78,7 @@ public class ApplicationEntity {
     private Boolean mailSent;
 
     @DynamoDBAttribute(attributeName = "Deadline")
-    @DynamoDBTyped(DynamoDBMapperFieldModel.DynamoDBAttributeType.S)
+    @DynamoDBTypeConverted(converter = LocalDateConverter.class)
     private LocalDate deadline;
 
     @DynamoDBAttribute(attributeName = "AssigneeId")
