@@ -1,5 +1,12 @@
 package com.dynamodb.service;
 
+import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
+import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapperConfig;
+import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBQueryExpression;
+import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBScanExpression;
+import com.amazonaws.services.dynamodbv2.model.AttributeValue;
+import com.dynamodb.config.DynamoDBConfig;
+import com.dynamodb.model.Account;
 import com.dynamodb.model.Application;
 import com.dynamodb.model.Employee;
 import com.dynamodb.model.Movie;
@@ -20,14 +27,14 @@ public class MovieService {
     private MovieRepository movieRepository;
     private EmployeeRepository employeeRepository;
     private AppRepository appRepository;
+    private DynamoDBConfig client;
 
-    //  private DynamoDBConfig client;
 
-
-    public MovieService(MovieRepository movieRepository, EmployeeRepository employeeRepository, AppRepository appRepository) {
+    public MovieService(MovieRepository movieRepository, EmployeeRepository employeeRepository, AppRepository appRepository, DynamoDBConfig client) {
         this.movieRepository = movieRepository;
         this.employeeRepository = employeeRepository;
         this.appRepository = appRepository;
+        this.client = client;
     }
 
     public List<Movie> getAllMovies() {
@@ -50,7 +57,13 @@ public class MovieService {
 
     public Employee saveEmployee(Employee employee) {
 
+        int accountId = 1;
+        for (Account a: employee.getAccount()) {
+            a.setAccountId(accountId++);
+        }
+
         employee.setCreatedAt(LocalDateTime.now());
+
         return employeeRepository.save(employee);
     }
 
@@ -67,20 +80,39 @@ public class MovieService {
 
 
     public List<Employee> findByBalance(String balance) {
-        List<Employee> employeeList = StreamSupport
-                .stream(employeeRepository.findAll().spliterator(), true).toList()
-                .stream().filter(p -> Objects.equals(p.getAccount().getBalance(), balance))
-                .toList();
-
          List<Employee> eList = employeeRepository.findByCreatedAtBetween(
                 LocalDateTime.now().minusDays(4),
                 LocalDateTime.now().plusDays(3)
         );
 
-       // List<Employee> eList = employeeRepository.findTop2ByOrderByCreatedAtDesc();
+        String name = "Nurlan";
+         String matchSchoolName = "name = :name";
+        Map<String, AttributeValue> schoolNames = new HashMap<>();
+        schoolNames.put(":name", new AttributeValue().withS(name));
+        schoolNames.put(":balance", new AttributeValue().withS("1000man"));
 
 
-        return eList;
+        DynamoDBQueryExpression<Employee> queryExpression = new DynamoDBQueryExpression<Employee>()
+                //.withHashKeyValues(name)
+                //.withIndexName("schoolName-index")
+                 .withKeyConditionExpression(matchSchoolName)
+                .withFilterExpression("Account.balance = :balance")
+                .withExpressionAttributeValues(schoolNames)
+                .withConsistentRead(false)
+                .withLimit(3);
+
+        DynamoDBMapperConfig mapperConfig
+                = new DynamoDBMapperConfig.Builder().withTableNameOverride(DynamoDBMapperConfig.TableNameOverride.withTableNameReplacement("employee")).build();
+
+        DynamoDBMapper dynamoDBMapper = new DynamoDBMapper(client.amazonDynamoDB(), mapperConfig);
+
+
+        List<Employee> fetchedMembers = dynamoDBMapper.query(Employee.class, queryExpression);
+
+
+        //List<Books> scanResult = mapper.scan(Books.class, scanExpression);
+        return fetchedMembers;
+
     }
 
 
