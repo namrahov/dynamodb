@@ -4,8 +4,6 @@ import com.amazonaws.services.dynamodbv2.datamodeling.*;
 import com.dynamodb.util.LocalDateTimeConverter;
 
 import java.time.LocalDateTime;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 
 @DynamoDBTable(tableName = "employee")

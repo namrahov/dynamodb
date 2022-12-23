@@ -1,7 +1,7 @@
 package com.dynamodb.controller;
 
 
-import com.dynamodb.model.Application;
+import com.dynamodb.model.App;
 import com.dynamodb.model.Employee;
 import com.dynamodb.model.Movie;
 import com.dynamodb.service.MovieService;
@@ -45,8 +45,8 @@ public class MovieController {
     }
 
     @PostMapping("/application")
-    public Application saveEmployee(@RequestBody Application application) {
-        return movieService.saveApplication(application);
+    public App saveEmployee(@RequestBody App app) {
+        return movieService.saveApplication(app);
     }
 
     @GetMapping("/{balance}")

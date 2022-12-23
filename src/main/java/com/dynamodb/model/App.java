@@ -1,12 +1,13 @@
 package com.dynamodb.model;
 
 import com.amazonaws.services.dynamodbv2.datamodeling.*;
+import com.dynamodb.entity.document.Comment;
 
 import java.util.Date;
 import java.util.List;
 
-@DynamoDBTable(tableName = "application")
-public class Application {
+@DynamoDBTable(tableName = "app")
+public class App {
 
     String id;
     Integer checkId;

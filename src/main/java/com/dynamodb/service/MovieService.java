@@ -3,17 +3,15 @@ package com.dynamodb.service;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapperConfig;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBQueryExpression;
-import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBScanExpression;
 import com.amazonaws.services.dynamodbv2.model.AttributeValue;
 import com.dynamodb.config.DynamoDBConfig;
 import com.dynamodb.model.Account;
-import com.dynamodb.model.Application;
+import com.dynamodb.model.App;
 import com.dynamodb.model.Employee;
 import com.dynamodb.model.Movie;
 import com.dynamodb.repository.AppRepository;
 import com.dynamodb.repository.EmployeeRepository;
 import com.dynamodb.repository.MovieRepository;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -74,8 +72,8 @@ public class MovieService {
                 .collect(Collectors.toList());
     }
 
-    public Application saveApplication(Application application) {
-        return appRepository.save(application);
+    public App saveApplication(App app) {
+        return appRepository.save(app);
     }
 
 
