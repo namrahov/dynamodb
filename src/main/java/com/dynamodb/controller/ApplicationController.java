@@ -11,7 +11,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Arrays;
 
 @RestController
 @RequestMapping("/ms-ecourt/v1/ecourt/applications")
@@ -21,8 +20,10 @@ public class ApplicationController {
     private final ApplicationService applicationService;
 
     @GetMapping
-    public PageableApplicationDto getApplications(@RequestParam Integer page, @RequestParam Integer count) {
-        return applicationService.getApplications(page, count);
+    public PageableApplicationDto getApplications(@RequestParam Integer page,
+                                                  @RequestParam Integer count,
+                                                  @RequestParam(required = false) String courtName) {
+        return applicationService.getApplications(page, count, courtName);
     }
 
     @PostMapping

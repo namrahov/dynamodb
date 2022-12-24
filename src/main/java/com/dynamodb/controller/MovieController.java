@@ -50,7 +50,7 @@ public class MovieController {
     }
 
     @GetMapping("/last-inserted")
-    public List<Employee> lastItemsInsertedInOneDay() {
-        return movieService.lastItemsInsertedInOneDay();
+    public List<Employee> reversedLastItemsInsertedInOneDay() {
+        return movieService.reversedLastItemsInsertedInOneDay();
     }
 }

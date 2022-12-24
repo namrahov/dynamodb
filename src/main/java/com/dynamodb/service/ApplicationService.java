@@ -8,15 +8,23 @@ import com.dynamodb.entity.ApplicationEntity;
 import com.dynamodb.dto.ApplicationDto;
 import com.dynamodb.entity.document.Comment;
 import com.dynamodb.mapper.ApplicationMapper;
+import com.dynamodb.model.App;
+import com.dynamodb.model.Employee;
 import com.dynamodb.model.enums.CommentType;
 import com.dynamodb.model.enums.Status;
 import com.dynamodb.repository.ApplicationRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Function;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -24,10 +32,15 @@ public class ApplicationService {
 
     private final ApplicationRepository applicationRepository;
 
-    public PageableApplicationDto getApplications(Integer page, Integer count) {
+    public PageableApplicationDto getApplications(Integer page, Integer count, String courtName) {
         Pageable pageable = PageRequest.of(page, count);
 
-        var pages = applicationRepository.findAll(pageable);
+        Page<ApplicationEntity> pages;
+        if(courtName == null) {
+             pages = applicationRepository.findAll(pageable);
+        } else {
+             pages = applicationRepository.findByCourtName(courtName, pageable);
+        }
 
         var applications = pages.getContent();
 
@@ -36,11 +49,6 @@ public class ApplicationService {
         var totalElements = pages.getTotalElements();
 
         if (lastPageNumber != 0) lastPageNumber -= 1;
-
-
-        for (ApplicationEntity application : applications) {
-            System.out.println(application);
-        }
 
         return PageableApplicationDto.builder()
                 .list(ApplicationMapper.entitiesToDtos(applications))
@@ -88,32 +96,44 @@ public class ApplicationService {
     }
 
     public FilterInfo getFilterInfo() {
-        List<ApplicationEntity> applicationEntities
-                = (List<ApplicationEntity>) applicationRepository.findAll();
+        List<ApplicationEntity> lastSixMonthApplications = applicationRepository.findByCreatedAtBetween(
+                LocalDateTime.now().minusMonths(6),
+                LocalDateTime.now()
+        );
 
-        for (ApplicationEntity application : applicationEntities) {
-            System.out.println(application);
-        }
-
-        ApplicationEntity low =
-                applicationEntities.stream()
+        //Application with max request id
+       /* ApplicationEntity max =
+                lastSixMonthApplications.stream()
                 .max(Comparator.comparing(ApplicationEntity::getRequestId))
                 .orElseThrow(NoSuchElementException::new);
 
-        //System.out.println(low.getRequestId());
+        System.out.println(max.getRequestId());*/
 
-        List<String> courts = new ArrayList<>();
-        List<String> judges = new ArrayList<>();
-        List<String> assignedPersons = new ArrayList<>();
+        List<ApplicationEntity> distinctByCourNames = lastSixMonthApplications.stream()
+                .filter(distinctByKey(ApplicationEntity::getCourtName)).toList();
+        List<ApplicationEntity> distinctByJudgeNames = lastSixMonthApplications.stream()
+                .filter(distinctByKey(ApplicationEntity::getJudgeName)).toList();
+        List<ApplicationEntity> distinctByAssignedPersons = lastSixMonthApplications.stream()
+                .filter(distinctByKey(ApplicationEntity::getAssigneeName)).toList();
 
 
-        FilterInfo filterInfo = new FilterInfo();
-        filterInfo.setCourts(courts);
-        filterInfo.setJudges(judges);
-        filterInfo.setAssignedPersons(assignedPersons);
+        List<String> courts = distinctByCourNames.stream().map(ApplicationEntity::getCourtName).toList();
+        List<String> judges = distinctByJudgeNames.stream().map(ApplicationEntity::getJudgeName).toList();
+        List<String> assignedPersons = distinctByAssignedPersons.stream().map(ApplicationEntity::getAssigneeName).toList();
 
-        return filterInfo;
+        return FilterInfo.builder()
+                .courts(courts)
+                .judges(judges)
+                .assignedPersons(assignedPersons)
+                .build();
     }
+
+    private static <T> Predicate<T> distinctByKey(Function<? super T, Object> keyExtractor)
+    {
+        Map<Object, Boolean> map = new ConcurrentHashMap<>();
+        return t -> map.putIfAbsent(keyExtractor.apply(t), Boolean.TRUE) == null;
+    }
+
 
 
 }
