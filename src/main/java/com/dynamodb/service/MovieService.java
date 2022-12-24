@@ -56,7 +56,7 @@ public class MovieService {
     public Employee saveEmployee(Employee employee) {
 
         int accountId = 1;
-        for (Account a: employee.getAccount()) {
+        for (Account a : employee.getAccount()) {
             a.setAccountId(accountId++);
         }
 
@@ -67,9 +67,10 @@ public class MovieService {
 
     public List<Employee> getAllEmployees() {
 
-        return StreamSupport
+        return (List<Employee>) employeeRepository.findAll();
+       /* return StreamSupport
                 .stream(employeeRepository.findAll().spliterator(), true)
-                .collect(Collectors.toList());
+                .collect(Collectors.toList());*/
     }
 
     public App saveApplication(App app) {
@@ -77,13 +78,27 @@ public class MovieService {
     }
 
 
-    public List<Employee> findByBalance(String balance) {
-         List<Employee> eList = employeeRepository.findByCreatedAtBetween(
-                LocalDateTime.now().minusDays(4),
-                LocalDateTime.now().plusDays(3)
+    public List<Employee> lastItemsInsertedInOneDay(int increaseDay) {
+
+        List<Employee> lastFewDaysData = employeeRepository.findByCreatedAtBetween(
+                LocalDateTime.now().minusDays(increaseDay),
+                LocalDateTime.now().plusMinutes(1)
         );
 
-        String name = "Nurlan";
+        List<Employee> convertedLastFewDaysData = new ArrayList<>(lastFewDaysData);
+
+        if (!convertedLastFewDaysData.isEmpty() || increaseDay == 15) {
+            return convertedLastFewDaysData;
+        }
+
+        return lastItemsInsertedInOneDay(increaseDay + 1);
+    }
+
+    public List<Employee> lastItemsInsertedInOneDay() {
+        List<Employee> convertedLastFewDaysData = lastItemsInsertedInOneDay(1);
+        convertedLastFewDaysData.sort(Comparator.comparing(Employee::getCreatedAt, Comparator.reverseOrder()));
+
+      /*  String name = "Nurlan";
          String matchSchoolName = "name = :name";
         Map<String, AttributeValue> schoolNames = new HashMap<>();
         schoolNames.put(":name", new AttributeValue().withS(name));
@@ -105,11 +120,11 @@ public class MovieService {
         DynamoDBMapper dynamoDBMapper = new DynamoDBMapper(client.amazonDynamoDB(), mapperConfig);
 
 
-        List<Employee> fetchedMembers = dynamoDBMapper.query(Employee.class, queryExpression);
+        List<Employee> fetchedMembers = dynamoDBMapper.query(Employee.class, queryExpression);*/
 
 
         //List<Books> scanResult = mapper.scan(Books.class, scanExpression);
-        return fetchedMembers;
+        return convertedLastFewDaysData;
 
     }
 

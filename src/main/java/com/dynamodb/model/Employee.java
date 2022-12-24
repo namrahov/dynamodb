@@ -2,11 +2,13 @@ package com.dynamodb.model;
 
 import com.amazonaws.services.dynamodbv2.datamodeling.*;
 import com.dynamodb.util.LocalDateTimeConverter;
+import lombok.Data;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
 @DynamoDBTable(tableName = "employee")
+@Data
 public class Employee {
 
     String id;

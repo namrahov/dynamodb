@@ -2,6 +2,8 @@ package com.dynamodb.controller;
 
 
 import com.dynamodb.dto.ChangeStatusRequest;
+import com.dynamodb.dto.FilterInfo;
+import com.dynamodb.dto.PageableApplicationDto;
 import com.dynamodb.entity.ApplicationEntity;
 import com.dynamodb.dto.ApplicationDto;
 import com.dynamodb.service.ApplicationService;
@@ -18,9 +20,9 @@ public class ApplicationController {
 
     private final ApplicationService applicationService;
 
-    @GetMapping("/{applicationId}")
-    public ApplicationEntity getApplicationById(@PathVariable String applicationId) {
-        return applicationService.getApplicationById(applicationId);
+    @GetMapping
+    public PageableApplicationDto getApplications(@RequestParam Integer page, @RequestParam Integer count) {
+        return applicationService.getApplications(page, count);
     }
 
     @PostMapping
@@ -36,11 +38,9 @@ public class ApplicationController {
     }
 
 
-
-    /*@PutMapping("/{id}/change-status")
-    fun changeStatus(@RequestHeader(USER_ID) userId: Long,
-                     @PathVariable id: Long,
-                     @RequestBody request: ChangeStatusRequest) = applicationService.changeStatus(userId, id, request)*/
-
+    @GetMapping("/filter-info")
+    public FilterInfo getFilterInfo() {
+        return applicationService.getFilterInfo();
+    }
 
 }

@@ -1,0 +1,20 @@
+package com.dynamodb.dto;
+
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import java.util.List;
+
+
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+public class PageableApplicationDto {
+    private List<ApplicationDto> list;
+    private boolean hasNextPage;
+    private int lastPageNumber;
+    private long totalCount;
+}

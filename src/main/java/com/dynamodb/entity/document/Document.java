@@ -4,12 +4,10 @@ import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBDocument;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBTypeConvertedEnum;
 import com.dynamodb.model.enums.DocumentStatus;
 import com.dynamodb.model.enums.RequestType;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
 
 @DynamoDBDocument
-@Getter
-@Setter
+@Data
 public class Document {
     private Long documentId;
 

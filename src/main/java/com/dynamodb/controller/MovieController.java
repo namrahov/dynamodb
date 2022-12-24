@@ -49,8 +49,8 @@ public class MovieController {
         return movieService.saveApplication(app);
     }
 
-    @GetMapping("/{balance}")
-    public List<Employee> findByBalance(@PathVariable String balance) {
-        return movieService.findByBalance(balance);
+    @GetMapping("/last-inserted")
+    public List<Employee> lastItemsInsertedInOneDay() {
+        return movieService.lastItemsInsertedInOneDay();
     }
 }

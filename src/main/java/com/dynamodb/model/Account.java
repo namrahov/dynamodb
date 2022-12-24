@@ -1,8 +1,10 @@
 package com.dynamodb.model;
 
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBDocument;
+import lombok.Data;
 
 @DynamoDBDocument
+@Data
 public class Account {
 
     Integer accountId = 1;

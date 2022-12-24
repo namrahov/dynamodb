@@ -1,12 +1,10 @@
 package com.dynamodb.entity.document;
 
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBDocument;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
 
 @DynamoDBDocument
-@Getter
-@Setter
+@Data
 public class BrokenRule {
 
     private Long brokenRuleId;
