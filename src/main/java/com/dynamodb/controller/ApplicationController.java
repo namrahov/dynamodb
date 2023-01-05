@@ -1,11 +1,8 @@
 package com.dynamodb.controller;
 
 
-import com.dynamodb.dto.ChangeStatusRequest;
-import com.dynamodb.dto.FilterInfo;
-import com.dynamodb.dto.PageableApplicationDto;
+import com.dynamodb.dto.*;
 import com.dynamodb.entity.ApplicationEntity;
-import com.dynamodb.dto.ApplicationDto;
 import com.dynamodb.service.ApplicationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -38,10 +35,15 @@ public class ApplicationController {
         applicationService.changeStatus(applicationId, request);
     }
 
-
     @GetMapping("/filter-info")
     public FilterInfo getFilterInfo() {
         return applicationService.getFilterInfo();
     }
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @RequestMapping("/{applicationId}/set-deadline")
+    public void setDeadline(@PathVariable String applicationId, @RequestBody DeadlineDto dto) {
+        applicationService.setDeadline(applicationId, dto);
+    }
+
 
 }

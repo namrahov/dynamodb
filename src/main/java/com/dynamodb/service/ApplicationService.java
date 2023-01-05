@@ -1,15 +1,9 @@
 package com.dynamodb.service;
 
-import com.dynamodb.config.DynamoDBConfig;
-import com.dynamodb.dto.ChangeStatusRequest;
-import com.dynamodb.dto.FilterInfo;
-import com.dynamodb.dto.PageableApplicationDto;
+import com.dynamodb.dto.*;
 import com.dynamodb.entity.ApplicationEntity;
-import com.dynamodb.dto.ApplicationDto;
 import com.dynamodb.entity.document.Comment;
 import com.dynamodb.mapper.ApplicationMapper;
-import com.dynamodb.model.App;
-import com.dynamodb.model.Employee;
 import com.dynamodb.model.enums.CommentType;
 import com.dynamodb.model.enums.Status;
 import com.dynamodb.repository.ApplicationRepository;
@@ -24,7 +18,6 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -59,15 +52,8 @@ public class ApplicationService {
     }
 
     public ApplicationEntity getApplicationById(String applicationId) {
-        Optional<ApplicationEntity> optionalApplicationEntity = applicationRepository.findById(applicationId);
-        ApplicationEntity applicationEntity;
-        if (optionalApplicationEntity.isPresent()) {
-            applicationEntity = optionalApplicationEntity.get();
-        } else {
-            throw new RuntimeException("Application is not found");
-        }
 
-        return applicationEntity;
+        return getApplicationIfExist(applicationId);
     }
 
     public ApplicationEntity createApplication(ApplicationDto dto) {
@@ -75,13 +61,7 @@ public class ApplicationService {
     }
 
     public void changeStatus(String applicationId, ChangeStatusRequest request) {
-        Optional<ApplicationEntity> optionalApplicationEntity = applicationRepository.findById(applicationId);
-        ApplicationEntity applicationEntity;
-        if (optionalApplicationEntity.isPresent()) {
-            applicationEntity = optionalApplicationEntity.get();
-        } else {
-            throw new RuntimeException("Application is not found");
-        }
+        ApplicationEntity applicationEntity = getApplicationIfExist(applicationId);
 
         if (request.getStatus() == Status.HOLD) {
             long size = applicationEntity.getComments().size();
@@ -128,12 +108,27 @@ public class ApplicationService {
                 .build();
     }
 
-    private static <T> Predicate<T> distinctByKey(Function<? super T, Object> keyExtractor)
-    {
+    private static <T> Predicate<T> distinctByKey(Function<? super T, Object> keyExtractor) {
         Map<Object, Boolean> map = new ConcurrentHashMap<>();
         return t -> map.putIfAbsent(keyExtractor.apply(t), Boolean.TRUE) == null;
     }
 
+
+    public void setDeadline(String applicationId, DeadlineDto dto) {
+
+        var application = getApplicationIfExist(applicationId);
+
+        application.setDeadline(dto.getDeadline());
+
+        applicationRepository.save(application);
+    }
+
+
+    private ApplicationEntity getApplicationIfExist(String applicationId) {
+        return applicationRepository.findById(applicationId).orElseThrow(() -> {
+            throw new RuntimeException("APPLICATION_NOT_FOUND");
+        });
+    }
 
 
 }
