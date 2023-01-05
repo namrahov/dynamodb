@@ -11,8 +11,14 @@ cloud:
       static: eu-north-1
 
 spring:
+  main:
+    allow-bean-definition-overriding: true
   data:
     dynamodb:
       entity2ddl:
         auto: validate
+
+
+
+
 
